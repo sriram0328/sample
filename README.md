@@ -180,6 +180,12 @@ They are **automatically downloaded on first run** using a scripted setup.
 ---
 
 
-## 📌 License
+## 📝 License
 
-For academic and educational use.
+This project is licensed under the [MIT License](LICENSE).
+
+## 📧 Contact
+
+For any inquiries or feedback, please reach out to [Sriram Ramanadham](sriramramanadham355@gmail.com).
+
+---
