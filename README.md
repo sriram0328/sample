@@ -1,167 +1,185 @@
-# PlantDocBot: AI Plant Disease Diagnosis via Chat and Image Upload
+# PlantDocBot- Multimodal Plant Disease Detection
 
-An AI-powered chatbot that allows users (especially farmers and gardeners) to upload images of plant leaves or describe symptoms via text, and receive accurate plant disease diagnosis and treatment recommendations using computer vision and natural language processing techniques.
+PlantDocBot is a multimodal AI system for plant disease diagnosis that combines **image-based classification**, **text-based symptom validation**, and **dataset-driven guidance** through a retrieval-based chatbot.
+The system is designed to assist farmers, gardeners, and students by providing reliable disease identification from plant leaf images, with optional symptom validation.
 
-##  Overview
+---
 
-PlantDocBot combines the power of computer vision and NLP to provide an interactive tool capable of diagnosing common plant diseases from photos or text messages in real-time. The system processes both image uploads and symptom descriptions to deliver accurate disease identification and treatment recommendations.
+## Overview
 
-##  Objective
+PlantDocBot processes:
+- **Plant leaf images** for primary disease detection
+- **Optional symptom descriptions** for validation
+- **Curated dataset captions** for explanations and guidance
 
-To develop an AI-powered chatbot that enables:
-- Image upload of plant leaves for disease detection
-- Text-based symptom description and diagnosis
-- Real-time disease identification and treatment recommendations
-- Integration of image processing and natural language processing techniques
+The image model is the authoritative predictor, while the text model acts as a validator.
 
-##  Key Features
+---
 
-- **Dual Input Modes**: Upload plant images OR describe symptoms via text
-- **Image-Based Disease Detection**: CNN models (ResNet/MobileNet) trained on 50,000+ annotated plant leaf images
-- **Text-Based Symptom Analysis**: BERT/GPT-based NLP for interpreting symptom descriptions
-- **Treatment Recommendations**: Comprehensive cure methods and preventive measures
-- **Interactive Chatbot**: Conversational AI for seamless user interaction
-- **Real-time Diagnosis**: Instant disease identification with confidence scores
+## Objectives
 
-## 🏗️ Project Structure
+- Detect plant diseases from leaf images
+- Validate predictions using symptom descriptions (optional)
+- Retrieve disease-specific information from trusted datasets
+- Provide interactive, dataset-backed guidance via chatbot
+
+---
+
+## Key Features
+
+- Image-based plant disease classification (38 classes)
+- Optional text-based symptom validation
+- Dataset-backed disease explanations
+- Retrieval-based chatbot for plant care guidance
+- Web-based interface for image upload and interaction
+
+---
+
+## System Architecture
+
+
+- Image model: primary diagnosis
+- Text model: validation only
+- Chatbot: retrieval-based (non-generative)
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          USER INTERFACE                                  │
+│                     (React Frontend - index.html)                        │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                ┌────────────┴────────────┐
+                │                         │
+                ▼                         ▼
+        ┌───────────────┐         ┌──────────────┐
+        │ Image Upload  │         │  Text Input  │
+        │   (Leaf Photo)│         │  (Symptoms)  │
+        └───────┬───────┘         └──────┬───────┘
+                │                        │
+                ▼                        ▼
+        ┌───────────────┐         ┌──────────────────┐
+        │   CNN Model   │         │   NLP Model      │
+        │               │         │                  │
+        │               │         │                  │
+                        │         │                  │
+        └───────┬───────┘         └──────┬───────────┘
+                │                        │
+                └────────┬───────────────┘
+                         │
+                         ▼
+                ┌────────────────────┐
+                │ Disease Prediction │
+                │  (Validation &     │
+                │  Confidence Score) │
+                └─────────┬──────────┘
+                          │
+                          ├─────────────────┐
+                          ▼                 ▼
+                ┌─────────────────┐   ┌────────────────┐
+                │ Dataset Lookup  │   │   Chatbot      │
+                │   (captions.    │   │   Interface    │
+                │    parquet)     │   │  (Interactive  │
+                │                 │   │   Guidance)    │
+                └────────┬────────┘   └────────┬───────┘
+                         │                     │
+                         ▼                     ▼
+                ┌─────────────────┐   ┌────────────────┐
+                │  Explanation    │   │   Treatment    │
+                │  • Disease Info │   │   Guidance     │
+                │  • Symptoms     │   │  • Cures       │
+                │  • Causes       │   │  • Prevention  │
+                └─────────────────┘   └────────────────┘
+                         │                     │
+                         └──────────┬──────────┘
+                                    ▼
+                         ┌─────────────────────┐
+                         │  Response to User   │
+                         │  (Frontend Display) │
+                         └─────────────────────┘
+```
+---
+
+## 🗂️ Datasets Used
+
+- **PlantVillage Dataset**  
+  Used for training the image-based disease classification model (38 classes).
+
+- **PlantVillage Image–Text Pairs (Hugging Face)**  
+  Used to retrieve disease descriptions and guidance.
+
+---
+
+## 🤖 Models
+
+### Image Model
+- Custom CNN trained on 38 PlantVillage disease classes
+- Input: Plant leaf image
+- Output: Disease label
+
+### Text Model
+- Transformer-based classifier (DistilBERT)
+- Input: Symptom description (optional)
+- Role: Validation of image-based prediction
+
+### Chatbot
+- Retrieval-based
+- Uses dataset captions for:
+  - Symptoms
+  - Treatment suggestions
+  - Prevention tips
+- No generative language model used
+
+---
+
+## 📁 Project Structure
 
 ```
 PlantDocBot/
 ├── backend/
-│   ├── app.py                              # Flask/FastAPI main application
-│   ├── requirements.txt                     # Python dependencies
-│   ├── plantdoc_cnn.pth                    # Trained CNN model
-│   ├── label_encoder.pkl                    # Disease label encoder
-│   ├── plant_disease_captions.parquet      # Disease information database
-│   └── plant_disease_text_model/           # NLP model directory
-│       ├── model.safetensors               # Fine-tuned BERT model
-│       ├── config.json                      # Model configuration
-│       ├── tokenizer.json                   # Tokenizer
-│       ├── tokenizer_config.json            # Tokenizer configuration
-│       ├── special_tokens_map.json          # Special tokens mapping
-│       └── vocab.txt                        # Vocabulary file
+│   ├── app.py                              
+│   ├── requirements.txt                     
+│   ├── plantdoc_cnn.pth                    
+│   ├── label_encoder.pkl                   
+│   ├── plant_disease_captions.parquet      
+│   └── plant_disease_text_model/           
+│       ├── model.safetensors              
+│       ├── config.json                      
+│       ├── tokenizer.json                   
+│       ├── tokenizer_config.json            
+│       ├── special_tokens_map.json          
+│       └── vocab.txt                        
 │
 ├── frontend/
-│   ├── index.html                           # Main HTML page
+│   ├── index.html                          
 │   └── src/
-│       ├── main.jsx                         # React entry point
-│       └── App.jsx                          # Main App component
+│       ├── main.jsx                         
+│       └── App.jsx                          
 │
-├── PlantDoc.ipynb                           # Model training & analysis notebook
+├── PlantDoc.ipynb                          
 ├── .gitignore
 └── LICENSE
 ```
 
-## Datasets Used
+---
 
-1. **PlantVillage Dataset**: Open-source dataset with 50,000+ annotated plant leaf images for disease classification
-2. **PlantDoc Dataset**: Real-world noisy images available on Kaggle for robust model training
-3. **Text Corpus**: Plant symptom descriptions collected from agricultural forums, blogs, and research papers
+##  Model Weights
 
-## 🛠️ Technology Stack
+Due to size limitations, trained model weights are **not stored in this repository**.
 
-### Backend
-- **Framework**: Flask/FastAPI
-- **Deep Learning**: TensorFlow/PyTorch
-- **Image Processing**: OpenCV, PIL
-- **NLP**: HuggingFace Transformers (BERT)
-- **Model Format**: SafeTensors
+They are **automatically downloaded on first run** using a scripted setup.
 
-### Frontend
-- **Framework**: React.js
-- **Language**: JSX/JavaScript
-- **Build Tool**: Vite/Webpack
+---
 
-### Machine Learning
-- **Vision Models**: ResNet, MobileNet (CNN architectures)
-- **NLP Models**: BERT-based transformer for text classification
-- **Model Serialization**: PyTorch (.pth), SafeTensors
+##  Deployment
 
-## 🚀 Getting Started
+- **Backend**: Flask + PyTorch (Render)
+- **Frontend**: React (Vite) static site
+- API endpoints:
+  - `/predict` — disease detection
+  - `/chat` — dataset-driven guidance
 
-### Prerequisites
+---
 
-- Python 3.8+
-- Node.js 14+
-- npm or yarn
-- CUDA-capable GPU (optional, for faster inference)
 
-### Installation
+## 📌 License
 
-#### 1. Clone the Repository
-
-```bash
-git clone https://github.com/springboardmentor123g/PlantDocBotProject.git
-cd PlantDocBotProject
-git checkout Intern-SriramRamanadham
-```
-
-#### 2. Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the backend server
-python app.py
-```
-
-Backend will be available at `http://localhost:5000`
-
-#### 3. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-Frontend will be available at `http://localhost:3000`
-
-## 📱 System Modules
-
-### 1. Dataset Collection and Preprocessing
-- Image dataset cleaning and augmentation
-- NLP corpus preparation
-- Training/validation data splits
-
-### 2. Image-based Plant Disease Detection
-- CNN model training (ResNet/MobileNet)
-- Image preprocessing pipeline
-- Disease classification from leaf images
-
-### 3. Symptom-based Text Diagnosis Chatbot
-- BERT-based NLP model for symptom understanding
-- Text classification and entity recognition
-- Conversational response generation
-
-### 4. Recommendation System
-- Disease-to-treatment mapping
-- Preventive measures database
-- Confidence-based recommendations
-
-### 5. User Interface
-- Dual-mode input (image + text)
-- Chat-based interaction
-- Image upload mechanism
-- Results visualization
-
-### 6. Integration & Deployment
-- Backend API endpoints
-- Frontend-backend communication
-- Model serving and inference
+For academic and educational use.
