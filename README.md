@@ -158,6 +158,53 @@ PlantDocBot/
 ├── .gitignore
 └── LICENSE
 ```
+---
+### Installation
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/springboardmentor123g/PlantDocBotProject.git
+cd PlantDocBotProject
+git checkout Intern-SriramRamanadham
+```
+
+#### 2. Backend Setup
+
+```bash
+cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the backend server
+python app.py
+```
+
+Backend will be available at `http://localhost:5000`
+
+#### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Frontend will be available at `http://localhost:3000`
 
 ---
 
